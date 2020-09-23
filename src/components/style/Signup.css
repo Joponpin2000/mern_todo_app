@@ -1,0 +1,11 @@
+.signup-container {
+    background-image: url(../images/sbg.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.8;
+}
+
+.input-group {
+    margin: 10px 0;
+}
