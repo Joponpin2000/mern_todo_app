@@ -1,7 +1,12 @@
 import React from 'react';
 
 const NotFound = () => {
-    return <p>Inside notfound component</p>
+    return (
+        <div>
+            <h1>Error 505</h1>
+            <p>Not Found!</p>
+        </div>
+    );
 };
 
 

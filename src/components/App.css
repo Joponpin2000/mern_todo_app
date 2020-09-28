@@ -1,3 +1,23 @@
 header {
     margin-bottom: 70px;
 }
+
+.signup-container {
+    background-image: url(./images/sbg.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.8;
+}
+
+.input-group {
+    margin: 10px 0;
+}
+
+.login-container {
+    background-image: url(./images/lbg.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.8;
+}
