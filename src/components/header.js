@@ -1,6 +1,9 @@
 import React, { Fragment } from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { isAuthenticated, logout } from '../helpers/auth';
+import Navbar from 'react-bootstrap/Navbar';
+import Nav from 'react-bootstrap/Nav';
+import Container from 'react-bootstrap/Container';
 
 const Header = ({ history }) => {
 
@@ -11,50 +14,38 @@ const Header = ({ history }) => {
     }
 
     const showNavigation = () => (
-        <nav className="navbar fixed-top navbar-expand-lg navbar-toggleable-md double-nav navabr-light bg-light">
-            <h4><Link to="/" className="navabr-brand text-secondary">Logo</Link></h4>
-            <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span className="navbar-toggler-icon"></span>
-            </button>
-            <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
-                <ul className="navbar-nav">
-                    {!isAuthenticated() && (
-                        <Fragment>
-                            <li className="nav-item">
-                                <Link to="/" className="nav-link text-secondary">Home</Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link to="/signup" className="nav-link text-secondary">Signup</Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link to="/login" className="nav-link text-secondary">Login</Link>
-                            </li>
-                        </Fragment>
-                    )}
-                    {isAuthenticated() && isAuthenticated().role === 0 && (
-                        <Fragment>
-                            <li className="nav-item">
-                                <Link to="/user/dashboard" className="nav-link text-secondary">Dashboard</Link>
-                            </li>
-                        </Fragment>
-                    )}
-                    {isAuthenticated() && isAuthenticated().role === 1 && (
-                        <Fragment>
-                            <li className="nav-item">
-                                <Link to="/admin/dashboard" className="nav-link text-secondary">Dashboard</Link>
-                            </li>
-                        </Fragment>
-                    )}
-                    {isAuthenticated() && (
-                        <Fragment>
-                            <li className="nav-item">
-                                <button className="btn btn-link text-secondary text-decoration-none pl-0" onClick={handleLogout}>Logout</button>
-                            </li>
-                        </Fragment>
-                    )}
-                </ul>
-            </div>
-        </nav>
+
+        <Navbar bg="light" expand="lg">
+            <Container>
+                <Navbar.Brand href="/">Logo</Navbar.Brand>
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Collapse id="basic-navbar-nav">
+                    <Nav className="mr-auto">
+                        {!isAuthenticated() && (
+                            <Fragment>
+                                <Nav.Link href="/">Home</Nav.Link>
+                                <Nav.Link href="/signup">Signup</Nav.Link>
+                                <Nav.Link href="/login">Login</Nav.Link>
+                            </Fragment>
+                        )}
+                        {isAuthenticated() && isAuthenticated().role === 0 && (
+                            <Fragment>
+                                <Nav.Link href="/user/dashboard">Dashboard</Nav.Link>
+                            </Fragment>
+                        )}
+                        {isAuthenticated() && isAuthenticated().role === 1 && (
+                            <Fragment>
+                                <Nav.Link href="/admin/dashboard">Dashboard</Nav.Link>
+                            </Fragment>
+                        )}
+                        {isAuthenticated() && (
+                            <Fragment>
+                                <Nav.Link onClick={handleLogout} href="/login">Login</Nav.Link>
+                            </Fragment>
+                        )}
+                    </Nav>
+                </Navbar.Collapse></Container>
+        </Navbar >
     );
 
     return (

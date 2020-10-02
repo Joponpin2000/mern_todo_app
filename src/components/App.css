@@ -1,13 +1,9 @@
-header {
-    margin-bottom: 70px;
-}
-
 .signup-container {
     background-image: url(./images/sbg.jpg);
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-    opacity: 0.8;
+    opacity: 1;
 }
 
 .input-group {
@@ -19,5 +15,5 @@ header {
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-    opacity: 0.8;
+    opacity: 1;
 }

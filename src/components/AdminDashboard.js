@@ -4,10 +4,13 @@ import isEmpty from 'validator/lib/isEmpty';
 import { showErrorMsg, showSuccessMsg } from '../helpers/message';
 import { showLoading } from '../helpers/loading';
 import { createProduct } from '../api/product';
-
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
 
 const AdminDashboard = () => {
 
+    const [showCatModal, setShowCatModal] = useState(false);
+    const [showProdModal, setShowProdModal] = useState(false);
     const [categories, setCategories] = useState(null);
     const [category, setCategory] = useState('');
     const [successMsg, setSuccessMsg] = useState('');
@@ -37,6 +40,14 @@ const AdminDashboard = () => {
                 console.log(err);
             });
     }
+
+    const handleShowCat = () => setShowCatModal(true);
+
+    const handleShowProd = () => setShowProdModal(true);
+
+    const handleCloseCat = () => setShowCatModal(false);
+
+    const handleCloseProd = () => setShowProdModal(false);
 
     const handleMessages = evt => {
         setErrorMsg('');
@@ -135,19 +146,19 @@ const AdminDashboard = () => {
             <div className="container">
                 <div className="row pb-3">
                     <div className="col-md-4 my-1">
-                        <button className="btn btn-outline-info btn-block" data-toggle="modal" data-target="#addCategoryModal">
+                        <Button variant="outline-info" className="btn-block" onClick={handleShowCat}>
                             <i className="fas fa-plus"> Add Category</i>
-                        </button>
+                        </Button>
                     </div>
                     <div className="col-md-4 my-1">
-                        <button className="btn btn-outline-warning btn-block" data-toggle="modal" data-target="#addFoodModal">
+                        <Button variant="outline-warning" className="btn-block" onClick={handleShowProd}>
                             <i className="fas fa-plus"> Add Food</i>
-                        </button>
+                        </Button>
                     </div>
                     <div className="col-md-4 my-1">
-                        <button className="btn btn-outline-success btn-block">
+                        <Button variant="outline-success" className="btn-block">
                             <i className="fas fa-money-check-alt"> View Orders</i>
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </div>
@@ -155,99 +166,85 @@ const AdminDashboard = () => {
     )
 
     const showCategoryModal = () => (
-        <div id="addCategoryModal" className="modal" onClick={handleMessages}>
-            <div className="modal-dialog modal-dialog-centered modal-lg">
-                <div className="modal-content">
-                    <form onSubmit={handleCategorySubmit}>
-                        <div className="modal-header bg-info text-white">
-                            <h5 className="modal-title">Add Category</h5>
-                            <button className="close" data-dismiss="modal">
-                                <span><i className="fas fa-times"></i></span>
-                            </button>
-                        </div>
-                        <div className="modal-body my-2">
-                            {errorMsg && showErrorMsg(errorMsg)}
-                            {successMsg && showSuccessMsg(successMsg)}
-                            {loading ? (
-                                <div className="text-center">{showLoading()}</div>
-                            ) : (
-                                    <Fragment>
-                                        <label className="text-secondary">Category</label>
-                                        <input type="text" className="form-control" name="category" value={category} onChange={handleCategoryChange} />
-                                    </Fragment>
-                                )}
-                        </div>
-                        <div className="modal-footer">
-                            <button className="btn btn-secondary" data-dismss="modal">Close</button>
-                            <button className="btn btn-info" type="submit">Submit</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+        <Modal show={showCatModal} onHide={handleCloseCat} onClick={handleMessages}>
+            <form onSubmit={handleCategorySubmit}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Add Category</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {errorMsg && showErrorMsg(errorMsg)}
+                    {successMsg && showSuccessMsg(successMsg)}
+                    {loading ? (
+                        <div className="text-center">{showLoading()}</div>
+                    ) : (
+                            <Fragment>
+                                <label className="text-secondary">Category</label>
+                                <input type="text" className="form-control" name="category" value={category} onChange={handleCategoryChange} />
+                            </Fragment>
+                        )}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button onClick={handleCloseCat}>Close</Button>
+                    <Button type="submit">Submit</Button>
+                </Modal.Footer>
+            </form>
+        </Modal>
     )
 
 
     const showFoodModal = () => (
-        <div id="addFoodModal" className="modal" onClick={handleMessages}>
-            <div className="modal-dialog modal-dialog-centered modal-lg">
-                <div className="modal-content">
-                    <form onSubmit={handleProductSubmit}>
-                        <div className="modal-header bg-warning text-white">
-                            <h5 className="modal-title">Add Food</h5>
-                            <button className="close" data-dismiss="modal">
-                                <span><i className="fas fa-times"></i></span>
-                            </button>
-                        </div>
-                        <div className="modal-body my-2">
-                            {errorMsg && showErrorMsg(errorMsg)}
-                            {successMsg && showSuccessMsg(successMsg)}
-                            {loading ? (
-                                <div className="text-center">{showLoading()}</div>
-                            ) : (
-                                    <Fragment>
-                                        <div className="custom-file mb-2">
-                                            <input type="file" name="productImage" className="custom-file-input" onChange={handleProductImage} />
-                                            <label className="custom-file-label">Choose File</label>
-                                        </div>
-                                        <div className="form-group">
-                                            <label className="text-secondary">Name</label>
-                                            <input type="text" name="productName" value={productName} onChange={handleProductChange} className="form-control" />
-                                        </div>
-                                        <div className="form-group">
-                                            <label className="text-secondary">Description</label>
-                                            <textarea rows="3" name="productDesc" value={productDesc} onChange={handleProductChange} className="form-control"></textarea>
-                                        </div>
-                                        <div className="form-group">
-                                            <label className="text-secondary">Price</label>
-                                            <input type="text" name="productPrice" value={productPrice} onChange={handleProductChange} className="form-control" />
-                                        </div>
-                                        <div className="form-row">
-                                            <div className="form-group col-md-6">
-                                                <label className="text-secondary">Category</label>
-                                                <select className="custom-select mr-sm-2" name="productCategory" onChange={handleProductChange} >
-                                                    <option value="">Choose one...</option>
-                                                    {categories && categories.map(c => (
-                                                        <option key={c._id} value={c._id}>c.category</option>
-                                                    ))}
-                                                </select>
-                                            </div>
-                                            <div className="form-group col-md-6">
-                                                <label className="text-secondary">Quantity</label>
-                                                <input type="number" name="productQty" value={productQty} onChange={handleProductChange} className="form-control" min="0" max="1000" />
-                                            </div>
-                                        </div>
-                                    </Fragment>
-                                )}
-                        </div>
-                        <div className="modal-footer">
-                            <button className="btn btn-secondary" data-dismss="modal">Close</button>
-                            <button className="btn btn-warning text-white" type="submit">Submit</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+        <Modal show={showProdModal} onHide={handleCloseProd} onClick={handleMessages}>
+            <form onSubmit={handleProductSubmit}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Add Food</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {errorMsg && showErrorMsg(errorMsg)}
+                    {successMsg && showSuccessMsg(successMsg)}
+                    {loading ? (
+                        <div className="text-center">{showLoading()}</div>
+                    ) : (
+                            <Fragment>
+                                <div className="custom-file mb-2">
+                                    <input type="file" name="productImage" className="custom-file-input" onChange={handleProductImage} />
+                                    <label className="custom-file-label">Choose File</label>
+                                </div>
+                                <div className="form-group">
+                                    <label className="text-secondary">Name</label>
+                                    <input type="text" name="productName" value={productName} onChange={handleProductChange} className="form-control" />
+                                </div>
+                                <div className="form-group">
+                                    <label className="text-secondary">Description</label>
+                                    <textarea rows="3" name="productDesc" value={productDesc} onChange={handleProductChange} className="form-control"></textarea>
+                                </div>
+                                <div className="form-group">
+                                    <label className="text-secondary">Price</label>
+                                    <input type="text" name="productPrice" value={productPrice} onChange={handleProductChange} className="form-control" />
+                                </div>
+                                <div className="form-row">
+                                    <div className="form-group col-md-6">
+                                        <label className="text-secondary">Category</label>
+                                        <select className="custom-select mr-sm-2" name="productCategory" onChange={handleProductChange} >
+                                            <option value="">Choose one...</option>
+                                            {categories && categories.map(c => (
+                                                <option key={c._id} value={c._id}>c.category</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className="form-group col-md-6">
+                                        <label className="text-secondary">Quantity</label>
+                                        <input type="number" name="productQty" value={productQty} onChange={handleProductChange} className="form-control" min="0" max="1000" />
+                                    </div>
+                                </div>
+                            </Fragment>
+                        )}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button onClick={handleCloseProd}>Close</Button>
+                    <Button type="submit">Submit</Button>
+                </Modal.Footer>
+            </form>
+        </Modal>
 
     )
 
