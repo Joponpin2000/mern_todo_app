@@ -40,7 +40,7 @@ const Header = ({ history }) => {
                         )}
                         {isAuthenticated() && (
                             <Fragment>
-                                <Nav.Link onClick={handleLogout} href="/login">Login</Nav.Link>
+                                <Nav.Link onClick={handleLogout} href="/login">Logout</Nav.Link>
                             </Fragment>
                         )}
                     </Nav>

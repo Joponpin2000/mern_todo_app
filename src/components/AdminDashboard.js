@@ -45,7 +45,10 @@ const AdminDashboard = () => {
 
     const handleShowProd = () => setShowProdModal(true);
 
-    const handleCloseCat = () => setShowCatModal(false);
+    const handleCloseCat = () => {
+        setShowCatModal(false);
+        handleMessages();
+    };
 
     const handleCloseProd = () => setShowProdModal(false);
 
@@ -166,7 +169,7 @@ const AdminDashboard = () => {
     )
 
     const showCategoryModal = () => (
-        <Modal show={showCatModal} onHide={handleCloseCat} onClick={handleMessages}>
+        <Modal show={showCatModal} onHide={handleCloseCat} >
             <form onSubmit={handleCategorySubmit}>
                 <Modal.Header closeButton>
                     <Modal.Title>Add Category</Modal.Title>
