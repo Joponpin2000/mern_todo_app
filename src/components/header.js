@@ -1,15 +1,19 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import { withRouter } from 'react-router-dom';
 import { isAuthenticated, logout } from '../helpers/auth';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import Container from 'react-bootstrap/Container';
+import { getNumbers } from '../actions/getAction';
 
-const Header = ({ history }) => {
+const Header = (props) => {
+    useEffect(() => {
+        getNumbers();
+    }, [])
 
-    const handleLogout = evt => {
+    const handleLogout = () => {
         logout(() => {
-            history.push('/login');
+            props.history.push('/login');
         });
     }
 
@@ -31,6 +35,7 @@ const Header = ({ history }) => {
                         {isAuthenticated() && isAuthenticated().role === 0 && (
                             <Fragment>
                                 <Nav.Link href="/user/dashboard">Dashboard</Nav.Link>
+                                <Nav.Link href="/cart">Cart <span> {props.basketProps.basketNumbers} </span></Nav.Link>
                             </Fragment>
                         )}
                         {isAuthenticated() && isAuthenticated().role === 1 && (
@@ -54,5 +59,9 @@ const Header = ({ history }) => {
         </header>
     );
 }
+
+// const mapStateToProps = state => ({
+//     basketProps: state.basketState
+// })
 
 export default withRouter(Header);

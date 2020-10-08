@@ -9,6 +9,9 @@ import Button from 'react-bootstrap/Button';
 
 const AdminDashboard = () => {
 
+    //==================================
+    //        STATE                  
+    //==================================
     const [showCatModal, setShowCatModal] = useState(false);
     const [showProdModal, setShowProdModal] = useState(false);
     const [categories, setCategories] = useState(null);
@@ -16,6 +19,7 @@ const AdminDashboard = () => {
     const [successMsg, setSuccessMsg] = useState('');
     const [errorMsg, setErrorMsg] = useState('');
     const [loading, setLoading] = useState(false);
+
     const [productData, setProductData] = useState({
         productImage: null,
         productName: '',
@@ -26,6 +30,10 @@ const AdminDashboard = () => {
     });
 
     const { productImage, productName, productDesc, productPrice, productCategory, productQty } = productData
+
+    //==================================
+    //        HOOKS                  
+    //==================================
 
     useEffect(() => {
         loadCategories();
@@ -41,6 +49,15 @@ const AdminDashboard = () => {
             });
     }
 
+    //==================================
+    //        EVENT HANDLERS                  
+    //==================================
+
+    const handleMessages = evt => {
+        setErrorMsg('');
+        setSuccessMsg('');
+    };
+
     const handleShowCat = () => setShowCatModal(true);
 
     const handleShowProd = () => setShowProdModal(true);
@@ -50,11 +67,9 @@ const AdminDashboard = () => {
         handleMessages();
     };
 
-    const handleCloseProd = () => setShowProdModal(false);
-
-    const handleMessages = evt => {
-        setErrorMsg('');
-        setSuccessMsg('');
+    const handleCloseProd = () => {
+        setShowProdModal(false);
+        handleMessages();
     };
 
     const handleCategoryChange = evt => {
@@ -129,6 +144,9 @@ const AdminDashboard = () => {
         }
     }
 
+    //==================================
+    //        HEADER                  
+    //==================================
 
     const showHeader = () => (
         <div className="bg-dark text-white py-4">
@@ -143,6 +161,10 @@ const AdminDashboard = () => {
             </div>
         </div>
     );
+
+    //==================================
+    //        ACTION BUTTONS                  
+    //==================================
 
     const showActionButtons = () => (
         <div className="bg-light my-2">
@@ -167,6 +189,10 @@ const AdminDashboard = () => {
             </div>
         </div>
     )
+
+    //==================================
+    //        MODALS                  
+    //==================================
 
     const showCategoryModal = () => (
         <Modal show={showCatModal} onHide={handleCloseCat} >
@@ -194,9 +220,8 @@ const AdminDashboard = () => {
         </Modal>
     )
 
-
     const showFoodModal = () => (
-        <Modal show={showProdModal} onHide={handleCloseProd} onClick={handleMessages}>
+        <Modal show={showProdModal} onHide={handleCloseProd}>
             <form onSubmit={handleProductSubmit}>
                 <Modal.Header closeButton>
                     <Modal.Title>Add Food</Modal.Title>
@@ -230,7 +255,7 @@ const AdminDashboard = () => {
                                         <select className="custom-select mr-sm-2" name="productCategory" onChange={handleProductChange} >
                                             <option value="">Choose one...</option>
                                             {categories && categories.map(c => (
-                                                <option key={c._id} value={c._id}>c.category</option>
+                                                <option key={c._id} value={c._id}>{c.category}</option>
                                             ))}
                                         </select>
                                     </div>

@@ -17,3 +17,11 @@
     background-position: center;
     opacity: 1;
 }
+
+#home-bg {
+    background-image: url(./images/lbg.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 1;
+}

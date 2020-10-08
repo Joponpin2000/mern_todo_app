@@ -3,7 +3,7 @@ import axios from 'axios';
 export const signup = async (data) => {
     const config = {
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         }
     }
     const response = await axios.post('http://localhost:4000/api/auth/signup', data, config);
@@ -14,7 +14,7 @@ export const signup = async (data) => {
 export const login = async (data) => {
     const config = {
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         }
     }
     const response = await axios.post('http://localhost:4000/api/auth/login', data, config);

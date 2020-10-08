@@ -1,10 +1,14 @@
 import axios from 'axios';
+import { getCookie } from '../helpers/cookies';
 
 export const createCategory = async (formData) => {
+    let cookie = getCookie("token");
     const config = {
         headers: {
-            "Content-Type": "application/json"
-        }
+            "Content-Type": "application/json",
+            Cookie: "token=" + cookie + "",
+        },
+        withCredentials: true
     }
 
     const response = await axios.post('http://localhost:4000/api/category', formData, config);
@@ -12,7 +16,15 @@ export const createCategory = async (formData) => {
 }
 
 export const getCategories = async () => {
-    const response = await axios.get('http://localhost:4000/api/category');
+    let cookie = getCookie("token");
+    const config = {
+        headers: {
+            "Content-Type": "application/json",
+            Cookie: "token=" + cookie + "",
+        },
+        withCredentials: true
+    }
+    const response = await axios.get('http://localhost:4000/api/category', config);
 
     return response;
 }
