@@ -11,7 +11,7 @@ export const createCategory = async (formData) => {
         withCredentials: true
     }
 
-    const response = await axios.post('http://localhost:4000/api/category', formData, config);
+    const response = await axios.post('/api/category', formData, config);
     return response;
 }
 
@@ -24,7 +24,7 @@ export const getCategories = async () => {
         },
         withCredentials: true
     }
-    const response = await axios.get('http://localhost:4000/api/category', config);
+    const response = await axios.get('/api/category', config);
 
     return response;
 }

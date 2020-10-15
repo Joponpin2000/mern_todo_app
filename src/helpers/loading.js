@@ -20,9 +20,6 @@ export const showLoading = () => (
         <div className="spinner-grow text-info mr-2" role="status">
             <span className="sr-only">Loading...</span>
         </div>
-        <div className="spinner-grow text-light mr-2" role="status">
-            <span className="sr-only">Loading...</span>
-        </div>
         <div className="spinner-grow text-dark mr-2" role="status">
             <span className="sr-only">Loading...</span>
         </div>

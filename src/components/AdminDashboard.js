@@ -6,6 +6,7 @@ import { showLoading } from '../helpers/loading';
 import { createProduct } from '../api/product';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const AdminDashboard = () => {
 
@@ -74,6 +75,8 @@ const AdminDashboard = () => {
 
     const handleCategoryChange = evt => {
         setCategory(evt.target.value);
+        setErrorMsg('');
+        setSuccessMsg('');
     }
 
     const handleCategorySubmit = evt => {
@@ -110,6 +113,8 @@ const AdminDashboard = () => {
             ...productData,
             [evt.target.name]: evt.target.value,
         })
+        setErrorMsg('');
+        setSuccessMsg('');
     };
 
     const handleProductSubmit = (evt) => {
@@ -136,10 +141,24 @@ const AdminDashboard = () => {
             formData.append("productCategory", productCategory);
             formData.append("productQty", productQty);
 
+            setLoading(true);
+
             createProduct(formData)
-                .then()
+                .then(response => {
+                    setLoading(false);
+                    setSuccessMsg(response.data.successMessage);
+                    setProductData({
+                        productImage: null,
+                        productName: '',
+                        productDesc: '',
+                        productPrice: '',
+                        productCategory: '',
+                        productQty: '',
+                    })
+                })
                 .catch(err => {
-                    console.log(err);
+                    setLoading(false);
+                    setErrorMsg(err.response.data.errorMessage);
                 })
         }
     }
@@ -155,6 +174,7 @@ const AdminDashboard = () => {
                     <div className="col-md-4">
                         <h1>
                             <i className="fas fa-home"> Dashboard</i>
+                            {/* <FontAwesomeIcon icon={faHome} /> */}
                         </h1>
                     </div>
                 </div>
@@ -163,7 +183,7 @@ const AdminDashboard = () => {
     );
 
     //==================================
-    //        ACTION BUTTONS                  
+    //        ACTION BUTTONS
     //==================================
 
     const showActionButtons = () => (
@@ -191,7 +211,7 @@ const AdminDashboard = () => {
     )
 
     //==================================
-    //        MODALS                  
+    //        MODALS
     //==================================
 
     const showCategoryModal = () => (

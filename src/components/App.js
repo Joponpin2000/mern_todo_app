@@ -11,14 +11,11 @@ import AdminDashboard from './AdminDashboard';
 import AdminRoute from './AdminRoute';
 import UserRoute from './UserRoute';
 
-// import { Provider } from 'react-redux';
 import Cart from './Cart';
-// import store from '../store';
 
 class App extends Component {
   render() {
     return (
-      // <Provider store={store}>
       <Router>
         <Header />
         <Switch>
@@ -30,7 +27,6 @@ class App extends Component {
           <Route path="/cart" component={Cart} />
         </Switch>
       </Router>
-      // </Provider>
     );
   }
 }

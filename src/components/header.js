@@ -35,7 +35,7 @@ const Header = (props) => {
                         {isAuthenticated() && isAuthenticated().role === 0 && (
                             <Fragment>
                                 <Nav.Link href="/user/dashboard">Dashboard</Nav.Link>
-                                <Nav.Link href="/cart">Cart <span> {props.basketProps.basketNumbers} </span></Nav.Link>
+                                <Nav.Link href="/cart">Cart <span></span></Nav.Link>
                             </Fragment>
                         )}
                         {isAuthenticated() && isAuthenticated().role === 1 && (
