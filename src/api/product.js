@@ -26,7 +26,17 @@ export const fetchProducts = async () => {
         },
     }
 
-    const data = await axios.get('http://localhost:4000/api/products', config);
+    const response = await axios.get('http://localhost:4000/api/products', config);
+    return response.data.products;
+}
 
-    return data;
+export const fetchProductdetails = async (productId) => {
+    const config = {
+        headers: {
+            "Content-Type": "application/json",
+        },
+    }
+
+    const response = await axios.get('http://localhost:4000/api/products/' + productId, config);
+    return response.data.product;
 }

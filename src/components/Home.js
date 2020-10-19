@@ -1,7 +1,8 @@
 import React, { Fragment, useEffect } from 'react';
 import { Row, Col, Button, Container, Jumbotron, Card } from 'react-bootstrap';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
+// import { fetchProducts } from '../api/product';
 import { listProducts } from '../actions/productActions';
 import { showLoading } from '../helpers/loading';
 // import { connect } from 'react-redux';
@@ -13,7 +14,9 @@ const Home = (props) => {
     const { products, loading, error } = productList;
     const dispatch = useDispatch();
     useEffect(() => {
+
         dispatch(listProducts())
+
         return () => {
             //
         }
@@ -44,19 +47,21 @@ const Home = (props) => {
                         <h3 className="text-secondary mb-4">Popular Meals</h3>
                         <Row>
                             {
-                                products ?
+                                (products.length > 0) ? (
                                     // Map objects like this
-                                    Object.getOwnPropertyNames(products).map((product, i) =>
+                                    products.map((product, i) =>
                                         <Fragment key={i}>
                                             <Col md='4'>
                                                 <Card className="mb-3">
-                                                    <Card.Img height='250' src={`http://localhost:4000/${getSecondPart(products[product].productImage)}`} alt={products[product].productName} />
+                                                    <Link to={"/product/" + product._id}>
+                                                        <Card.Img height='250' src={`http://localhost:4000/${getSecondPart(product.productImage)}`} alt={product.productName} />
+                                                    </Link>
                                                     <Card.Body>
                                                         <Card.Title>
-                                                            <Link to="/">{products[product].productName}</Link>
+                                                            <Link to={"/product/" + product._id}>{product.productName}</Link>
                                                         </Card.Title>
                                                         <Card.Text>
-                                                            {products[product].productDesc}
+                                                            {product.productDesc}
                                                         </Card.Text>
                                                         {/* <a href="" onClick={() => props.addBasket('greyTshirt')}>Add to Cart</a> */}
                                                     </Card.Body>
@@ -64,7 +69,10 @@ const Home = (props) => {
                                             </Col>
                                         </Fragment>
                                     )
-                                    : <div></div>
+                                )
+                                    : (
+                                        <div className="hidden">Unavailable</div>
+                                    )
                             }
                         </Row>
                     </Container>

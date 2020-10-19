@@ -272,7 +272,7 @@ const AdminDashboard = () => {
                                 <div className="form-row">
                                     <div className="form-group col-md-6">
                                         <label className="text-secondary">Category</label>
-                                        <select className="custom-select mr-sm-2" name="productCategory" onChange={handleProductChange} >
+                                        <select className="custom-select mr-sm-2" name="productCategory" value={productQty} onChange={handleProductChange} >
                                             <option value="">Choose one...</option>
                                             {categories && categories.map(c => (
                                                 <option key={c._id} value={c._id}>{c.category}</option>
