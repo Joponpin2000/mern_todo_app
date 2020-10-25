@@ -66,7 +66,7 @@ const ProductScreen = (props) => {
                                                 </Card.Body>
                                             </Card>
                                         </Col>
-                                        <Col md='4' className="add-to-cart-box">
+                                        <Col md='4'>
                                             <Card>
                                                 <Card.Body>
                                                     <Card.Text>

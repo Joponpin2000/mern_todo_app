@@ -11,8 +11,12 @@ import UserDashboard from './UserDashboard';
 import AdminDashboard from './AdminDashboard';
 import AdminRoute from './AdminRoute';
 import UserRoute from './UserRoute';
-
-import Cart from './Cart';
+import NotFound from './NotFound';
+import CartScreen from './Cart';
+import Shipping from './Shipping';
+import Payment from './Payment';
+import PlaceOrder from './PlaceOrder';
+import Footer from './Footer';
 
 class App extends Component {
   render() {
@@ -24,10 +28,15 @@ class App extends Component {
           <Route exact path="/product/:id" component={ProductScreen} />
           <Route exact path="/login" component={Login} />
           <Route exact path="/signup" component={Signup} />
+          <Route exact path="/shipping" component={Shipping} />
+          <Route exact path="/payment" component={Payment} />
+          <Route exact path="/placeorder" component={PlaceOrder} />
           <UserRoute exact path="/user/dashboard" component={UserDashboard} />
           <AdminRoute exact path="/admin/dashboard" component={AdminDashboard} />
-          <Route path="/cart" component={Cart} />
+          <Route path="/cart/:id?" component={CartScreen} />
+          <Route component={NotFound} />
         </Switch>
+        <Footer />
       </Router>
     );
   }

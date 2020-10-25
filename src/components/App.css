@@ -1,3 +1,13 @@
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+#footer {
+    height: 5vh;
+    background-color: rgb(181, 181, 181);
+}
+
 .signup-container {
     background-image: url(./images/sbg.jpg);
     background-size: cover;
@@ -18,15 +28,44 @@
     opacity: 1;
 }
 
+#overlay {
+    background-color: #362638;
+}
+
+#height {
+    height: 80vh;
+}
+
 #home-bg {
-    background-image: url(./images/lbg.jpg);
+    background-image: url(./images/hbg.jpg);
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
     opacity: 1;
+    height: 80vh;
+
+    /* background-color: #362638; */
 }
 
-.product-image {
-    max-height: 400;
-    min-height: 150;
+/* Checkout Steps */
+
+.checkout-steps {
+    display: flex;
+    justify-content: space-between;
+    width: 40rem;
+    margin: 1rem auto;
+    background-color: white;
+    padding: 15px;
+    margin: 15px;
+}
+
+.checkout-steps>div {
+    border-top: .3rem #c0c0c0 solid;
+    color: #c0c0c0;
+    flex: 1 1;
+}
+
+.checkout-steps>div.active {
+    border-top: .3rem #f08000 solid;
+    color: #f08000;
 }

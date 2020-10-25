@@ -1,54 +1,53 @@
 import React, { useState, useEffect, Fragment } from 'react';
-import { createCategory, getCategories } from '../api/category';
 import isEmpty from 'validator/lib/isEmpty';
 import { showErrorMsg, showSuccessMsg } from '../helpers/message';
 import { showLoading } from '../helpers/loading';
-import { createProduct } from '../api/product';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Table from 'react-bootstrap/Table';
+import { useDispatch, useSelector } from 'react-redux';
+import { listProducts, saveProduct, deleteProduct } from '../actions/productActions';
+import { loadCategories, saveCategory } from '../actions/categoryAction';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHome, faPlus, faMoneyCheckAlt } from '@fortawesome/free-solid-svg-icons';
 
-const AdminDashboard = () => {
+const AdminDashboard = (props) => {
 
     //==================================
     //        STATE                  
     //==================================
     const [showCatModal, setShowCatModal] = useState(false);
     const [showProdModal, setShowProdModal] = useState(false);
-    const [categories, setCategories] = useState(null);
+    const categoryList = useSelector(state => state.categoryList);
+    const { categories } = categoryList;
     const [category, setCategory] = useState('');
-    const [successMsg, setSuccessMsg] = useState('');
-    const [errorMsg, setErrorMsg] = useState('');
-    const [loading, setLoading] = useState(false);
-
-    const [productData, setProductData] = useState({
-        productImage: null,
-        productName: '',
-        productDesc: '',
-        productPrice: '',
-        productCategory: '',
-        productQty: '',
-    });
-
-    const { productImage, productName, productDesc, productPrice, productCategory, productQty } = productData
+    const [id, setId] = useState('');
+    const [productName, setProductName] = useState('');
+    const [productImage, setProductImage] = useState(null);
+    const [productDesc, setProductDesc] = useState('');
+    const [productPrice, setProductPrice] = useState('');
+    const [productCategory, setProductCategory] = useState('');
+    const [productQty, setProductQty] = useState('');
+    const productList = useSelector(state => state.productList);
+    const { products } = productList;
+    const productSave = useSelector(state => state.productSave);
+    const { loading: loadingSave, success: successSave, error: errorSave } = productSave;
+    const categorySave = useSelector(state => state.categorySave);
+    const { loading: catLoadingSave, success: catSuccessSave, error: catErrorSave } = categorySave;
+    const productDelete = useSelector(state => state.productDelete);
+    const { success: successDelete } = productDelete;
+    const [errorMsg, setErrorMsg] = useState(errorSave || catErrorSave);
+    const [successMsg, setSuccessMsg] = useState(successSave || catSuccessSave);
 
     //==================================
     //        HOOKS                  
     //==================================
-
+    const dispatch = useDispatch();
     useEffect(() => {
+        dispatch(loadCategories())
         loadCategories();
-    }, [loading]);
-
-    const loadCategories = async () => {
-        await getCategories()
-            .then(response => {
-                setCategories(response.data.categories);
-            })
-            .catch(err => {
-                console.log(err);
-            });
-    }
+        dispatch(listProducts())
+    }, [dispatch, successDelete]);
 
     //==================================
     //        EVENT HANDLERS                  
@@ -60,8 +59,17 @@ const AdminDashboard = () => {
     };
 
     const handleShowCat = () => setShowCatModal(true);
+    const handleShowProd = (product) => {
 
-    const handleShowProd = () => setShowProdModal(true);
+        setShowProdModal(true);
+        setId(product._id);
+        setProductName(product.productName);
+        setProductImage(getSecondPart(product.productImage));
+        setProductDesc(product.productDesc);
+        setProductPrice(product.productPrice);
+        setProductCategory(product.productCategory);
+        setProductQty(product.productQty);
+    };
 
     const handleCloseCat = () => {
         setShowCatModal(false);
@@ -73,49 +81,32 @@ const AdminDashboard = () => {
         handleMessages();
     };
 
-    const handleCategoryChange = evt => {
-        setCategory(evt.target.value);
-        setErrorMsg('');
-        setSuccessMsg('');
-    }
-
     const handleCategorySubmit = evt => {
         evt.preventDefault();
 
         if (isEmpty(category)) {
             setErrorMsg('Please enter a category');
         } else {
-
             const data = { category };
-            setLoading(true);
-            createCategory(data)
-                .then(response => {
-                    setLoading(false);
-                    setSuccessMsg(response.data.successMessage);
-                    setCategory('')
-                })
-                .catch(err => {
-                    setLoading(false);
-                    setErrorMsg(err.response.data.errorMessage);
-                })
+
+            dispatch(saveCategory(data));
         }
     };
 
-    const handleProductImage = (evt) => {
-        setProductData({
-            ...productData,
-            [evt.target.name]: evt.target.files[0],
-        })
-    };
+    const getSecondPart = (str) => {
+        let gy = `${str}`;
+        return gy.toString().split('\\')[1];
+    }
 
-    const handleProductChange = (evt) => {
-        setProductData({
-            ...productData,
-            [evt.target.name]: evt.target.value,
-        })
+    const handleProductImage = (evt) => {
+        setProductImage(evt.target.files[0]);
         setErrorMsg('');
         setSuccessMsg('');
     };
+
+    const deleteProdHandler = (product) => {
+        dispatch(deleteProduct(product._id));
+    }
 
     const handleProductSubmit = (evt) => {
         evt.preventDefault();
@@ -123,43 +114,25 @@ const AdminDashboard = () => {
         if (productImage === null) {
             setErrorMsg('Please select an image');
         }
-        else if (isEmpty(productName) || isEmpty(productDesc) || isEmpty(productPrice)) {
+        else if (isEmpty(productName) || isEmpty(productDesc) || isEmpty(productPrice.toString())) {
             setErrorMsg('All fields are required');
         }
         else if (isEmpty(productCategory)) {
             setErrorMsg('Please select a category');
         }
-        else if (isEmpty(productQty)) {
+        else if (isEmpty(productQty.toString())) {
             setErrorMsg('Please select a quantity');
         }
         else {
             let formData = new FormData();
+            formData.append("productId", id);
             formData.append("productImage", productImage);
             formData.append("productName", productName);
             formData.append("productDesc", productDesc);
-            formData.append("productPrice", productPrice);
+            formData.append("productPrice", productPrice.toString());
             formData.append("productCategory", productCategory);
-            formData.append("productQty", productQty);
-
-            setLoading(true);
-
-            createProduct(formData)
-                .then(response => {
-                    setLoading(false);
-                    setSuccessMsg(response.data.successMessage);
-                    setProductData({
-                        productImage: null,
-                        productName: '',
-                        productDesc: '',
-                        productPrice: '',
-                        productCategory: '',
-                        productQty: '',
-                    })
-                })
-                .catch(err => {
-                    setLoading(false);
-                    setErrorMsg(err.response.data.errorMessage);
-                })
+            formData.append("productQty", productQty.toString());
+            dispatch(saveProduct(formData))
         }
     }
 
@@ -173,8 +146,7 @@ const AdminDashboard = () => {
                 <div className="row">
                     <div className="col-md-4">
                         <h1>
-                            <i className="fas fa-home"> Dashboard</i>
-                            {/* <FontAwesomeIcon icon={faHome} /> */}
+                            <FontAwesomeIcon icon={faHome} />{' '} Dashboard
                         </h1>
                     </div>
                 </div>
@@ -192,22 +164,23 @@ const AdminDashboard = () => {
                 <div className="row pb-3">
                     <div className="col-md-4 my-1">
                         <Button variant="outline-info" className="btn-block" onClick={handleShowCat}>
-                            <i className="fas fa-plus"> Add Category</i>
+                            <FontAwesomeIcon icon={faPlus} /> {' '}Add Category
+
                         </Button>
                     </div>
                     <div className="col-md-4 my-1">
                         <Button variant="outline-warning" className="btn-block" onClick={handleShowProd}>
-                            <i className="fas fa-plus"> Add Food</i>
+                            <FontAwesomeIcon icon={faPlus} /> {' '} Add Food
                         </Button>
                     </div>
                     <div className="col-md-4 my-1">
                         <Button variant="outline-success" className="btn-block">
-                            <i className="fas fa-money-check-alt"> View Orders</i>
+                            <FontAwesomeIcon icon={faMoneyCheckAlt} /> {' '} View Orders
                         </Button>
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     )
 
     //==================================
@@ -221,14 +194,18 @@ const AdminDashboard = () => {
                     <Modal.Title>Add Category</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    {errorMsg && showErrorMsg(errorMsg)}
-                    {successMsg && showSuccessMsg(successMsg)}
-                    {loading ? (
+                    {(errorMsg || catErrorSave || errorSave) && showErrorMsg(errorMsg || catErrorSave || errorSave)}
+                    {(successMsg || catSuccessSave || successSave) && showSuccessMsg(successMsg || catSuccessSave || successSave)}
+                    {(loadingSave || catLoadingSave) ? (
                         <div className="text-center">{showLoading()}</div>
                     ) : (
                             <Fragment>
                                 <label className="text-secondary">Category</label>
-                                <input type="text" className="form-control" name="category" value={category} onChange={handleCategoryChange} />
+                                <input type="text" className="form-control" name="category" onChange={(e) => {
+                                    setCategory(e.target.value);
+                                    setErrorMsg('');
+                                    setSuccessMsg('');
+                                }} />
                             </Fragment>
                         )}
                 </Modal.Body>
@@ -247,9 +224,9 @@ const AdminDashboard = () => {
                     <Modal.Title>Add Food</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    {errorMsg && showErrorMsg(errorMsg)}
-                    {successMsg && showSuccessMsg(successMsg)}
-                    {loading ? (
+                    {errorSave && showErrorMsg(errorSave)}
+                    {successSave && showSuccessMsg(successSave)}
+                    {(loadingSave || catLoadingSave) ? (
                         <div className="text-center">{showLoading()}</div>
                     ) : (
                             <Fragment>
@@ -259,20 +236,36 @@ const AdminDashboard = () => {
                                 </div>
                                 <div className="form-group">
                                     <label className="text-secondary">Name</label>
-                                    <input type="text" name="productName" value={productName} onChange={handleProductChange} className="form-control" />
+                                    <input type="text" name="productName" value={productName} onChange={(e) => {
+                                        setProductName(e.target.value);
+                                        setErrorMsg('');
+                                        setSuccessMsg('');
+                                    }} className="form-control" />
                                 </div>
                                 <div className="form-group">
                                     <label className="text-secondary">Description</label>
-                                    <textarea rows="3" name="productDesc" value={productDesc} onChange={handleProductChange} className="form-control"></textarea>
+                                    <textarea rows="3" name="productDesc" value={productDesc} onChange={(e) => {
+                                        setProductDesc(e.target.value);
+                                        setErrorMsg('');
+                                        setSuccessMsg('');
+                                    }} className="form-control"></textarea>
                                 </div>
                                 <div className="form-group">
                                     <label className="text-secondary">Price</label>
-                                    <input type="text" name="productPrice" value={productPrice} onChange={handleProductChange} className="form-control" />
+                                    <input type="text" name="productPrice" value={productPrice} onChange={(e) => {
+                                        setProductPrice(e.target.value);
+                                        setErrorMsg('');
+                                        setSuccessMsg('');
+                                    }} className="form-control" />
                                 </div>
                                 <div className="form-row">
                                     <div className="form-group col-md-6">
                                         <label className="text-secondary">Category</label>
-                                        <select className="custom-select mr-sm-2" name="productCategory" value={productQty} onChange={handleProductChange} >
+                                        <select className="custom-select mr-sm-2" name="productCategory" value={productCategory} onChange={(e) => {
+                                            setProductCategory(e.target.value);
+                                            setErrorMsg('');
+                                            setSuccessMsg('');
+                                        }} >
                                             <option value="">Choose one...</option>
                                             {categories && categories.map(c => (
                                                 <option key={c._id} value={c._id}>{c.category}</option>
@@ -281,7 +274,11 @@ const AdminDashboard = () => {
                                     </div>
                                     <div className="form-group col-md-6">
                                         <label className="text-secondary">Quantity</label>
-                                        <input type="number" name="productQty" value={productQty} onChange={handleProductChange} className="form-control" min="0" max="1000" />
+                                        <input type="number" name="productQty" value={productQty} onChange={(e) => {
+                                            setProductQty(e.target.value);
+                                            setErrorMsg('');
+                                            setSuccessMsg('');
+                                        }} className="form-control" min="0" max="1000" />
                                     </div>
                                 </div>
                             </Fragment>
@@ -289,12 +286,45 @@ const AdminDashboard = () => {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button onClick={handleCloseProd}>Close</Button>
-                    <Button type="submit">Submit</Button>
+                    <Button type="submit">{id ? "Update" : "Submit"}</Button>
                 </Modal.Footer>
             </form>
         </Modal>
 
     )
+
+    const showProductsList = () => (
+        <Fragment>
+            <h3>Products</h3>
+            <Table striped bordered hover>
+                <thead><tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>No. In Stock</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {products.map((product, i) => (
+                        <tr key={i}>
+                            <td>{i}</td>
+                            <td>{product.productName}</td>
+                            <td>{product.productCategory}</td>
+                            <td>{product.productPrice}</td>
+                            <td>{product.productQty}</td>
+                            <td>
+                                <Button variant="warning" onClick={() => handleShowProd(product)}>Edit</Button>
+                                {' '}
+                                <Button variant="danger" onClick={() => deleteProdHandler(product)} >Delete</Button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </Table>
+        </Fragment>
+    );
 
     return (
         <section>
@@ -302,6 +332,7 @@ const AdminDashboard = () => {
             {showActionButtons()}
             {showCategoryModal()}
             {showFoodModal()}
+            {showProductsList()}
         </section>
     );
 };

@@ -5,7 +5,7 @@ export const setCookie = (key, value) => {
 };
 
 export const getCookie = (key) => {
-    return Cookies.get(key);
+    return Cookies.getJSON(key);
 };
 
 

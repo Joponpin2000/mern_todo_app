@@ -5,15 +5,18 @@ import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import Container from 'react-bootstrap/Container';
 import { getNumbers } from '../actions/getAction';
+import { useSelector } from 'react-redux';
 
 const Header = (props) => {
+    const userSignin = useSelector(state => state.userSignin);
+    const { userInfo } = userSignin;
     useEffect(() => {
         getNumbers();
     }, [])
 
     const handleLogout = () => {
         logout(() => {
-            props.history.push('/login');
+            props.history.push('/');
         });
     }
 
@@ -43,13 +46,15 @@ const Header = (props) => {
                                 <Nav.Link href="/admin/dashboard">Dashboard</Nav.Link>
                             </Fragment>
                         )}
-                        {isAuthenticated() && (
+                        {userInfo && isAuthenticated() && (
                             <Fragment>
-                                <Nav.Link onClick={handleLogout} href="/login">Logout</Nav.Link>
+                                {/* <Nav.Link to="/profile">My Profile ({userInfo.username})</Nav.Link> */}
+                                <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
                             </Fragment>
                         )}
                     </Nav>
-                </Navbar.Collapse></Container>
+                </Navbar.Collapse>
+            </Container>
         </Navbar >
     );
 

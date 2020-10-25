@@ -1,104 +1,52 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import isEmail from 'validator/lib/isEmail';
 import isEmpty from 'validator/lib/isEmpty';
 import equals from 'validator/lib/equals';
 import { Link } from 'react-router-dom';
 import { showErrorMsg, showSuccessMsg } from '../helpers/message';
 import { showLoading } from '../helpers/loading';
-import { signup } from '../api/auth';
-import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
-import { isAuthenticated } from '../helpers/auth';
+import { register } from '../actions/userActions';
+import { useDispatch, useSelector } from 'react-redux';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEnvelope, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
 
+const Signup = (props) => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('')
+    const [username, setUsername] = useState('');
+    const [password2, setPassword2] = useState('')
+    const userRegister = useSelector(state => state.userRegister);
+    const { loading, successmsg, error } = userRegister;
+    const [errormsg, setErrormsg] = useState(error || false);
 
-const Signup = () => {
-
-    let history = useHistory();
-
-
+    const dispatch = useDispatch();
+    const redirect = props.location.search ? props.location.search.split("=")[1] : null;
     useEffect(() => {
 
-        if (isAuthenticated() && isAuthenticated().role === 1) {
-            history.push('/admin/dashboard')
-        } else if (isAuthenticated() && isAuthenticated().role === 0) {
-            history.push('/user/dashboard')
-        }
-    }, [history]);
+        if (error) setErrormsg(error);
 
-    const [formData, setFormData] = useState({
-        username: 'test',
-        email: 'test@email.com',
-        password: 'test123',
-        password2: 'test123',
-        successmsg: false,
-        errormsg: false,
-        loading: false,
-    });
-
-    const { username, email, password, password2, successmsg, errormsg, loading, } = formData;
-
-    const handleChange = e => {
-        setFormData({
-            ...formData, [e.target.name]: e.target.value,
-            successmsg: '',
-            errormsg: ''
-        });
-    };
+    }, [error]);
 
     const handleSubmit = e => {
         e.preventDefault();
 
         if (isEmpty(username) || isEmpty(email) || isEmpty(password) || isEmpty(password2)) {
-            setFormData(
-                {
-                    ...formData, errormsg: 'All fields are required'
-                }
-            );
+            setErrormsg('All fields are required');
         }
         else if (!isEmail(email)) {
-            setFormData(
-                {
-                    ...formData, errormsg: 'Invalid Email'
-                }
-            );
+            setErrormsg('Invalid Email');
         }
         else if (!equals(password, password2)) {
-            setFormData(
-                {
-                    ...formData, errormsg: 'Passwords do not match'
-                }
-            );
+            setErrormsg('Passwords do not match');
         }
         else {
-            const { username, email, password } = formData;
-            const data = { username, email, password };
-            setFormData(
-                {
-                    ...formData, loading: true,
-                }
-            );
-            signup(data)
-                .then((response) => {
-
-                    setFormData(
-                        {
-                            username: '',
-                            email: '',
-                            password: '',
-                            password2: '',
-                            successmsg: response.data.successMessage,
-                            errormsg: false,
-                            loading: false,
-                        });
-                })
-                .catch((err) => {
-                    console.log('Axios signup error: ', err);
-                    setFormData(
-                        {
-                            ...formData,
-                            loading: false,
-                            errormsg: err.response.data.errorMessage,
-                        });
-                });
+            // setLoading(true)
+            const formData = ({
+                username,
+                email,
+                password
+            })
+            dispatch(register(formData));
         }
 
     };
@@ -108,34 +56,34 @@ const Signup = () => {
             <div className="form-panel input-group">
                 <div className="input-group-grouped">
                     <span className="input-group-text">
-                        <i className="fa fa-user"></i>
+                        <FontAwesomeIcon icon={faUser} />
                     </span>
                 </div>
-                <input name="username" onChange={handleChange} className="form-control" value={username} placeholder="Username" type="text" />
+                <input name="username" onChange={(e) => setUsername(e.target.value)} className="form-control" placeholder="Username" type="text" />
             </div>
             <div className="form-panel input-group">
                 <div className="input-group-grouped">
                     <span className="input-group-text">
-                        <i className="fa fa-envelope"></i>
+                        <FontAwesomeIcon icon={faEnvelope} />
                     </span>
                 </div>
-                <input name="email" onChange={handleChange} className="form-control" value={email} placeholder="Email address" type="email" />
+                <input name="email" onChange={(e) => setEmail(e.target.value)} className="form-control" placeholder="Email address" type="email" />
             </div>
             <div className="form-panel input-group">
                 <div className="input-group-grouped">
                     <span className="input-group-text">
-                        <i className="fa fa-lock"></i>
+                        <FontAwesomeIcon icon={faLock} />
                     </span>
                 </div>
-                <input name="password" onChange={handleChange} className="form-control" placeholder="Password" value={password} type="password" />
+                <input name="password" onChange={(e) => setPassword(e.target.value)} className="form-control" placeholder="Password" type="password" />
             </div>
             <div className="form-panel input-group">
                 <div className="input-group-grouped">
                     <span className="input-group-text">
-                        <i className="fa fa-lock"></i>
+                        <FontAwesomeIcon icon={faLock} />
                     </span>
                 </div>
-                <input name="password2" onChange={handleChange} className="form-control" placeholder="Confirm password" value={password2} type="password" />
+                <input name="password2" onChange={(e) => setPassword2(e.target.value)} className="form-control" placeholder="Confirm Password" type="password" />
             </div>
             <div className="form-group">
                 <button name="" className="btn btn-primary btn-block" type="submit">
@@ -143,10 +91,10 @@ const Signup = () => {
                 </button>
             </div>
             <p className="text-center text-white">
-                Have an account? <Link to="/login">Log In</Link>
+                Have an account? <Link to={redirect ? "/login?redirect=" + redirect : "/login"}>Log In</Link>
             </p>
         </form>
-    );
+    )
 
     return (
 
@@ -164,6 +112,5 @@ const Signup = () => {
 
     );
 };
-
 
 export default Signup;
